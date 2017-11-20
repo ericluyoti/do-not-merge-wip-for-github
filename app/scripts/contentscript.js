@@ -21,6 +21,7 @@
       } else {
         var wipTitleRegex = /[\[(^](do\s*n[o']?t\s*merge|wip|dnm)[\]):]/i;
         var wipTagRegex = /(wip|do\s*not\s*merge|dnm)/i;
+        var btTagRegex = /(Built-and-tested)/i;
 
         var isWipTitle = wipTitleRegex.test(issueTitle);
         var isWipTaksList = $container.find('.timeline-comment:first input[type="checkbox"]:not(:checked)').length > 0;
@@ -30,18 +31,20 @@
         });
 
         var isWipTag = false;
+        var isBtTag = false;
         $container.find('#discussion_bucket .labels .label').each(function(i, elem) {
           isWipTag = isWipTag || $(elem).text().match(wipTagRegex);
+          isBtTag = isBtTag || $(elem).text().match(btTagRegex);
         });
 
-        disabled = (isWipTitle || isWipTaksList || isSquashCommits || isWipTag);
+        disabled = (!isBtTag);
 
         var buttonMessage = '';
 
         if (localStorage && localStorage.buttonMessage) {
           buttonMessage = localStorage.buttonMessage;
         } else {
-          buttonMessage = 'WIP! You can\'t merge!';
+          buttonMessage = 'B&T required';
         }
 
         var $buttonIcon = $buttonMerge.find('.octicon');
